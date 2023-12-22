@@ -5,8 +5,12 @@ classdef GameOfLifeGrid
         %aliveCells [nx2] (x,y) coordinate of the alives cells
         aliveCells
 
+        %borned [nx2] (x,y) coordinate of the newly born cells after a call
+        %to update
         borned
 
+        %dead [nx2] (x,y) coordinate of the newly dead cells after a call
+        %to update
         dead
     end
 
@@ -28,7 +32,7 @@ classdef GameOfLifeGrid
         end
 
         function neighbour = getNeighbour(obj, x,y)
-            %getNeighbour return the list of neighbour of the cell (x,y)
+            %getNeighbour Return the list of neighbour of the cell (x,y)
             % and their life status as a Nx3 array (x,y status)
             % The number of alive neighbour is sum(neighbour(:,3))
 
@@ -67,18 +71,15 @@ classdef GameOfLifeGrid
                 potientialyAlive = [ potientialyAlive ; ...
                                      neighbour( neighbour(:,3) == 0, [1,2] )];                    
             end
-
-            % Remove duplicate 
-            potientialyAlive = unique(potientialyAlive,'rows');
-            born = false(1,size(obj.aliveCells,1));
-            for iCell = 1:size(potientialyAlive,1)
-                neighbour = obj.getNeighbour(potientialyAlive(iCell,1) , potientialyAlive(iCell,2));
-                nAlive    = sum(neighbour(:,3));
-                
-                if nAlive == 3
-                    born(iCell) = true;
-                end
-            end
+            
+            % Find cells that should become alive. Number of occurance of
+            % each cell in potientialyAlive correspond to the number of
+            % neighbour of the dead cell. If this number is 3, then the
+            % cell become alive. This doesn't require to call getNeighbour
+            % for each cell. 
+            [potientialyAlive,~,ic] = unique(potientialyAlive,'rows');
+            nAlive  = accumarray(ic,1);
+            born    = (nAlive == 3);
 
             obj.borned          = potientialyAlive(born, : );
             obj.dead            = obj.aliveCells(~stayingAlive, :);

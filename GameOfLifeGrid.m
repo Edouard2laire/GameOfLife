@@ -1,8 +1,8 @@
-classdef GameOfLife
-    % GameOfLife Summary of this class goes here
-    %   Detailed explanation goes here
+classdef GameOfLifeGrid
+    % GameOfLife Represent the grod of the game of life
 
     properties
+        %aliveCells [nx2] (x,y) coordinate of the alives cells
         aliveCells
     end
 
@@ -57,7 +57,6 @@ classdef GameOfLife
                 
                 % Create a list of dead cell, that has alived neighbour to
                 % consider for aliveness 
-
                 potientialyAlive = [ potientialyAlive ; ...
                                      neighbour( neighbour(:,3) == 0, [1,2] )];                    
             end

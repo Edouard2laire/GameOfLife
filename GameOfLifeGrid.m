@@ -1,18 +1,25 @@
 classdef GameOfLifeGrid
-    % GameOfLife Represent the grod of the game of life
+    % GameOfLife Represent the grid of the game of life
 
     properties
         %aliveCells [nx2] (x,y) coordinate of the alives cells
         aliveCells
+
+        borned
+
+        dead
     end
 
     methods
-        function obj = GameOfLife(initialConfiguration)
+        function obj = GameOfLifeGrid(initialConfiguration)
             if nargin < 1 
                 initialConfiguration = [];
             end
 
             obj.aliveCells = initialConfiguration;
+            obj.borned     = initialConfiguration;
+            obj.dead       = [];
+
         end
 
         function t = isAlive(obj, x, y)
@@ -31,7 +38,7 @@ classdef GameOfLifeGrid
                           x - 1, y    ,   obj.isAlive( x - 1 , y    ) ; ...
                           x + 1, y    ,   obj.isAlive( x + 1 , y    ) ; ...
                           x - 1, y + 1,   obj.isAlive( x - 1 , y + 1) ; ...
-                          x ,    y + 1,   obj.isAlive( x     , y + 1) ; ...
+                          x    , y + 1,   obj.isAlive( x     , y + 1) ; ...
                           x + 1, y + 1,   obj.isAlive( x + 1 , y + 1) ; ...                          
                         ];
         end
@@ -73,9 +80,10 @@ classdef GameOfLifeGrid
                 end
             end
 
-
-            obj.aliveCells = [ obj.aliveCells(stayingAlive, :)  ; ...
-                               potientialyAlive(born, : )];
+            obj.borned          = potientialyAlive(born, : );
+            obj.dead            = obj.aliveCells(~stayingAlive, :);
+            obj.aliveCells      = [ obj.aliveCells(stayingAlive, :)  ; ...
+                                    potientialyAlive(born, : )];
         end
     end
 end

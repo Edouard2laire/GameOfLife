@@ -7,7 +7,7 @@ classdef GameOfLifeFlatTorus < AbstractGrid
     end
 
     methods
-        function obj = GameOfLifeFlatTorus(initialConfiguration, dim_x, dim_y)
+        function obj = GameOfLifeFlatTorus(dim_x, dim_y, initialConfiguration)
             obj = obj@AbstractGrid(initialConfiguration);
             obj.dimension = [dim_x, dim_y];
         end

@@ -22,13 +22,20 @@ while(ishghandle(f))
                   'Tag', sprintf('%d-%d',cell(1),cell(2) ))
     end
     
-    % Remove dead cells 
-    for iCell = 1:size(obj.dead,1)
-        cell = obj.dead(iCell,:);
-        h = findobj('Tag',sprintf('%d-%d',cell(1),cell(2) ));
+    % % Remove dead cells 
+    if size(obj.dead,1) >= 1
+        C =  repmat({}, 1,size(obj.dead,1));
+        for iCell = 1:size(obj.dead,1)
+            cell = obj.dead(iCell,:);
+            C{3*(iCell-1) +1}= 'Tag';
+            C{3*(iCell-1) +2} = sprintf('%d-%d',cell(1),cell(2) );
+            C{3*(iCell-1) +3} = '-or';
+        end
+        C = C(1:end-1);
+        h = findobj(0,C);
 
         if ~isempty(h)
-            delete(h)
+            delete(h);
         end
     end
     obj = update(obj);

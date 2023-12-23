@@ -19,15 +19,44 @@ classdef GameOfLifeGrid
             if nargin < 1 
                 initialConfiguration = [];
             end
-
-            obj.aliveCells = initialConfiguration;
-            obj.borned     = initialConfiguration;
+            
+            obj = obj.addPattern(initialConfiguration,0, 0);
             obj.dead       = [];
+        end
 
+        function obj = addPattern(obj, pattern, offset_x, offset_y)
+            %ADDPATTERN Give life to the (nx2) position of pattern. Add an
+            % offset to the position using offset_x, offset_y. Default 0
+
+            if nargin < 2 
+                offset_x = 0;
+            end
+            if nargin < 3
+                offset_y = 0;
+            end
+
+            pattern = pattern + [offset_x, offset_y];
+
+            for iCell = 1:size(pattern,1)
+
+                if obj.isAlive(pattern(iCell,1), pattern(iCell,2))
+                    warning('Cell (%d,%d) was already alive', pattern(iCell,1), pattern(iCell,2))
+                else
+                    obj.aliveCells(end+1,:) = pattern(iCell,:);
+                    obj.borned(end+1,:) = pattern(iCell,:);
+                end
+            end
+    
         end
 
         function t = isAlive(obj, x, y)
             %ISALIVE Return 1 if the cell (x,y) is currently alive
+
+            if isempty(obj.aliveCells)
+                t = false;
+                return
+            end
+
             t = any(all(obj.aliveCells == [ x, y],2));
         end
 

@@ -12,6 +12,8 @@ classdef (Abstract) AbstractGrid
         %dead [nx2] (x,y) coordinate of the newly dead cells after a call
         %to update
         dead
+
+        dimension
     end
     methods (Abstract)
         obj = addPattern(obj, pattern, offset_x, offset_y)
@@ -22,9 +24,14 @@ classdef (Abstract) AbstractGrid
             if nargin < 1 
                 initialConfiguration = [];
             end
-            
-            obj = obj.addPattern(initialConfiguration,0, 0);
-            obj.dead       = [];
+
+            obj.aliveCells  = [];
+            obj.borned      = [];
+            obj.dead        = [];
+
+            if ~isempty(initialConfiguration)
+                obj = obj.addPattern(initialConfiguration,0, 0);
+            end
         end
 
         function t = isAlive(obj, x, y)

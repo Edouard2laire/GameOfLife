@@ -7,6 +7,7 @@ classdef GameOfLifeGrid < AbstractGrid
     methods
         function obj = GameOfLifeGrid(initialConfiguration)
             obj = obj@AbstractGrid(initialConfiguration);
+            obj.dimension = [Inf Inf];
         end
 
         function obj = addPattern(obj, pattern, offset_x, offset_y)

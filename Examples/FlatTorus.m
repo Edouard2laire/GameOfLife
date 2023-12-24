@@ -1,14 +1,21 @@
 f = figure('Name','Game of Life');
-ax =  axis();
-axis equal
-axis off
+grid_dim = [20 20];
 
-xlim([0 20]);
-ylim([0 20]);
-grid on
+ax =  axis();
+axis equal off 
+
+xlim([0 grid_dim(1)]); ylim([0 grid_dim(2)]);
 set(gca, 'YDir','reverse')
-xline([0, 20], 'blue','LineWidth',2)
-yline([0, 20], 'red', 'LineWidth',2)
+
+% add box
+xline([0, grid_dim(1)], 'blue','LineWidth',2)
+yline([0, grid_dim(2)], 'red', 'LineWidth',2)
+
+%add grid
+xline(1:(grid_dim(1)-1), 'Color', '#808080','LineWidth',0.5)
+yline(1:(grid_dim(2)-1), 'Color', '#808080','LineWidth',0.5)
+
+
 
 obj     = GameOfLifeFlatTorus(20, 20,[]);
 obj     = obj.addPattern(getPattern('light_space_ship'), 12, 5);
@@ -18,7 +25,7 @@ obj     = obj.addPattern(getPattern('blinker'), 2, 12);
 iter    = 1; 
 fps     = 0;
 
-while(ishghandle(f)) && iter <= 70
+while(ishghandle(f)) && iter <= 78
 
     tic;
     

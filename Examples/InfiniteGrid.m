@@ -1,12 +1,10 @@
 profile on
 
-f = figure('Name','Game of Life');
-ax =  axis();
+f = figure('Name','Game of Life - #1','NumberTitle','off');
 axis equal
-xlim([-50 50]);
-ylim([-50 50]);
-grid on
+axis([-50 50 -50 50]);
 set(gca, 'YDir','reverse')
+grid on
 
 cells   = getPattern('f-pentomino');
 obj     = GameOfLifeGrid(cells);

@@ -84,8 +84,9 @@ while(ishghandle(f2)) && iter < N_iter
     % Draw new cells 
     for iCell = 1:size(obj.borned,1)
         alive_cell = obj.borned(iCell,:);
-        h = rectangle('Position',[alive_cell(1) alive_cell(2) 1 1], 'FaceColor','black',...
-                  'Tag', sprintf('%d-%d',alive_cell(1),alive_cell(2) ));
+        h = rectangle('Position',[alive_cell(1) alive_cell(2) 1 1], ...
+                      'FaceColor','black',...
+                      'Tag', sprintf('%d-%d',alive_cell(1),alive_cell(2) ));
         handles(sprintf('%d-%d',alive_cell(1),alive_cell(2) )) = h;
     end
     
@@ -148,8 +149,9 @@ while(ishghandle(f3)) && iter < N_iter
     idx_to_create = find(~isStored);
     for iCell = 1:length(idx_to_create)
         alive_cell = obj.borned(idx_to_create(iCell),:);
-        h = rectangle('Position',[alive_cell(1) alive_cell(2) 1 1], 'FaceColor','black',...
-                  'Tag', sprintf('%d-%d',alive_cell(1),alive_cell(2) ));
+        h = rectangle('Position',[alive_cell(1) alive_cell(2) 1 1], ...
+                      'FaceColor','black',...
+                      'Tag', sprintf('%d-%d',alive_cell(1),alive_cell(2) ));
         handles(sprintf('%d-%d',alive_cell(1),alive_cell(2) )) = h;
     end
     

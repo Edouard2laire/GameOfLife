@@ -1,4 +1,6 @@
-profile on
+% profile on
+clear; close all;
+
 
 f = figure('Name','Game of Life - #1','NumberTitle','off');
 axis equal
@@ -6,47 +8,44 @@ axis([-50 50 -50 50]);
 set(gca, 'YDir','reverse')
 grid on
 
-cells   = getPattern('f-pentomino');
-obj     = GameOfLifeGrid(cells);
+game     = GameOfLifeGrid(getPattern('f-pentomino'));
 iter    = 1; 
 fps     = 0;
+tfps    = 10; % target fps
 
-while(ishghandle(f)) && iter < 1000
+handles = configureDictionary("string",class(rectangle));
 
-    tic;
+t0 = tic; 
+while(ishghandle(f)) && iter < 2000
+
+    t1 = tic;
     
     % Draw new cells 
-    for iCell = 1:size(obj.borned,1)
-        alive_cell = obj.borned(iCell,:);
-        rectangle('Position',[alive_cell(1) alive_cell(2) 1 1], 'FaceColor','black',...
-                  'Tag', sprintf('%d-%d',alive_cell(1),alive_cell(2) ))
+    for iCell = 1:size(game.borned,1)
+        alive_cell = game.borned(iCell,:);
+        h = rectangle('Position',[alive_cell(1) alive_cell(2) 1 1], ...
+                      'FaceColor','black',...
+                      'Tag', sprintf('%d-%d',alive_cell(1),alive_cell(2) ));
+        handles(keyHash([alive_cell(1),alive_cell(2)])) = h;
     end
     
-    % % Remove dead cells 
-    if size(obj.dead,1) >= 1
-        % Create querry to find all the cells that should be deleted 
-        querry =  cell(1,3*size(obj.dead,1));
-        querry(1:3:3*size(obj.dead,1))  = repmat({'Tag'},1,size(obj.dead,1));
-        querry(2:3:3*size(obj.dead,1))  = cellstr([num2str(obj.dead(:,1)) repmat('-',size(obj.dead,1),1)  num2str(obj.dead(:,2))]);
-        querry(3:3:3*size(obj.dead,1))  = repmat({'-or'},1,size(obj.dead,1));
-
-        querry(2:3:3*size(obj.dead,1)) = cellfun(@(x)strrep(x,' ',''), querry(2:3:3*size(obj.dead,1)), 'UniformOutput', false);
-        querry = querry(1:end-1);
-        h = findobj(0,querry);
-
-        if ~isempty(h)
-            delete(h);
-        end
+    % Remove dead cells 
+    if size(game.dead,1) >= 1
+        querry = arrayfun(@(x,y)keyHash([x,y]), game.dead(:,1), game.dead(:,2));        
+        delete(handles(querry));
     end
-    obj = update(obj);
+    
+    % Update Grid
+    game = update(game);
     iter = iter+1;
     
-    newt = toc;    
-    fps = .9*fps + .1*(1/newt);
+    % Display some information and force redraw
+    newt = toc(t1);    
+    pause(max(0, (1 - tfps*newt)/tfps))
 
-    title(sprintf('Iter %d - %d cell alive (fps %.2f)', iter, size(obj.aliveCells,1),fps))
-    drawnow
-
+    fps = .9*fps + .1*(1/toc(t1));
+    title(sprintf('Iter %d - %d cell alive (fps %.2f)', iter, size(game.aliveCells,1),fps))
 end
+toc(t0);
 
-profile viewer
+%profile viewer

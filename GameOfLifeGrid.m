@@ -30,7 +30,7 @@ classdef GameOfLifeGrid < AbstractGrid
                 if obj.isAlive(cell)
                     warning('Cell (%d,%d) was already alive', cell.x, cell.y)
                 else
-                    obj.aliveCells(end+1,:) = cell;
+                    obj.aliveCells(cell)    = true;
                     obj.borned(end+1,:)     = cell;
                 end
             end

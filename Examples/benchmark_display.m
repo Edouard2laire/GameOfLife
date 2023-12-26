@@ -60,9 +60,10 @@ toc(t0);
 
 %% Method #2 - Create/Delete rectangles, delete rectangle using dictionnary to store handle
 clear; close all;
+profile on
 
 cells   = getPattern('f-pentomino');
-N_iter  = 2000;
+N_iter  = 200;
 
 f2 = figure('Name','Game of Life - #1','NumberTitle','off');
 axis equal
@@ -90,8 +91,11 @@ while(ishghandle(f2)) && iter < N_iter
     end
     
     % % Remove dead cells 
-    h = handles(obj.dead(1));
-    delete(h);
+    if ~isempty(obj.dead)
+        h = handles(obj.dead);
+        handles.remove(obj.dead);
+        delete(h);
+    end
 
     obj = update(obj);
     iter = iter+1;
@@ -104,6 +108,7 @@ while(ishghandle(f2)) && iter < N_iter
 
 end
 toc(t0);
+profile viewer
 
 %% Method #3 - Create rectangle only onces and stores them, 
 % when a rectangle is deleted, only hides it instead of destroying it

@@ -25,9 +25,9 @@ classdef (Abstract) AbstractGrid
                 initialConfiguration = [];
             end
 
-            obj.aliveCells  = Points2D();
-            obj.borned      = Points2D();
-            obj.dead        = Points2D();
+            obj.aliveCells  = configureDictionary("Points2D","logical");
+            obj.borned      = repmat(Points2D(),0,0);
+            obj.dead        = repmat(Points2D(),0,0);
 
             if ~isempty(initialConfiguration)
                 obj = obj.addPattern(initialConfiguration,0, 0);
@@ -45,9 +45,9 @@ classdef (Abstract) AbstractGrid
             end
 
             if nargin == 3 
-                t =  any(obj.aliveCells == Points2D(x,y));
+                t =  isKey(obj.aliveCells, Points2D(x,y));
             elseif nargin == 2 && isa(x,'Points2D')
-                t =  any(obj.aliveCells == x);
+                t = isKey(obj.aliveCells, x);
             end
 
         end
@@ -61,9 +61,11 @@ classdef (Abstract) AbstractGrid
             
             stayingAlive        = false(1,size(obj.aliveCells,1));
             potientialyAlive    = [];
+            
+            AliveCells = obj.aliveCells.keys;
 
-            for iCell = 1:length(obj.aliveCells)
-                neighbour = obj.getNeighbour(obj.aliveCells(iCell));
+            for iCell = 1:length(AliveCells)
+                neighbour = obj.getNeighbour(AliveCells(iCell));
                 nAlive    = sum(neighbour(:,3));
                 
                 % Keep track of the cell that should remains alive
@@ -87,10 +89,11 @@ classdef (Abstract) AbstractGrid
             born    = (nAlive == 3);
 
             obj.borned          = Points2D(potientialyAlive(born, 1 ),potientialyAlive(born, 2 ));
-            obj.dead            = Points2D(potientialyAlive(~stayingAlive, 1 ),potientialyAlive(~stayingAlive, 2 ));
+            obj.dead            = AliveCells(~stayingAlive);
             
-            obj.aliveCells      = [ obj.aliveCells(stayingAlive)  ; ...
-                                    obj.borned ];
+            obj.aliveCells.remove(obj.dead);
+            obj.aliveCells(obj.borned) = true;
+
         end
     end
 end

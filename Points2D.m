@@ -28,16 +28,20 @@ classdef Points2D
             h = keyHash([obj.x obj.y]);
         end
 
+        function mat = toMat(obj)
+            mat = cell2mat(arrayfun(@(a)[a.x , a.y],obj,'UniformOutput',false));
+        end
+
+
         % Equality operator 
         function TF = keyMatch(objA,objB)
             TF = objA.x == objB.x && objA.y == objB.y;
         end
         function TF = eq(objA,objB)
             if size(objA,1) > 1
-                TF = false(1,size(objA,1));
-                for iPoint = 1:size(objA,1)
-                    TF(iPoint) = objA(iPoint) == objB;
-                end
+                 mat = toMat(objA);
+                 TF = all( mat(:,1) == objB.x &  mat(:,2) == objB.y,2);
+
                 return;
             end
             TF = objA.x == objB.x && objA.y == objB.y;

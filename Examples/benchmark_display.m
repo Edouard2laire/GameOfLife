@@ -74,7 +74,7 @@ obj     = GameOfLifeGrid(cells);
 iter    = 1; 
 fps     = 0;
 
-handles = configureDictionary("string",class(rectangle));
+handles = configureDictionary("Points2D",class(rectangle));
 
 t0 = tic; 
 while(ishghandle(f2)) && iter < N_iter
@@ -83,23 +83,15 @@ while(ishghandle(f2)) && iter < N_iter
     
     % Draw new cells 
     for iCell = 1:size(obj.borned,1)
-        alive_cell = obj.borned(iCell,:);
-        h = rectangle('Position',[alive_cell(1) alive_cell(2) 1 1], 'FaceColor','black',...
-                  'Tag', sprintf('%d-%d',alive_cell(1),alive_cell(2) ));
-        handles(sprintf('%d-%d',alive_cell(1),alive_cell(2) )) = h;
+        alive_cell = obj.borned(iCell);
+        h = rectangle('Position',[alive_cell.x alive_cell.y 1 1], 'FaceColor','black',...
+                  'Tag', sprintf('%d-%d',alive_cell.x,alive_cell.y ));
+        handles(alive_cell) = h;
     end
     
     % % Remove dead cells 
-    if size(obj.dead,1) >= 1
-        % Create querry to find all the cells that should be deleted 
-        % Remove dead cells 
-        querry = cellstr([num2str(obj.dead(:,1)) repmat('-',size(obj.dead,1),1)  num2str(obj.dead(:,2))]);
-        querry = cellfun(@(x)strrep(x,' ',''), querry, 'UniformOutput', false);
-        
-        h = handles(querry);
-        % handles.remove(querry);
-        delete(h);
-    end
+    h = handles(obj.dead(1));
+    delete(h);
 
     obj = update(obj);
     iter = iter+1;

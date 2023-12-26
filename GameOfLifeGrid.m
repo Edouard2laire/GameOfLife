@@ -20,25 +20,32 @@ classdef GameOfLifeGrid < AbstractGrid
             if nargin < 3
                 offset_y = 0;
             end
+            
+            pattern =  Points2D(pattern(:,1), pattern(:,2)) + Points2D(offset_x, offset_y);
 
-            pattern = pattern + [offset_x, offset_y];
 
             for iCell = 1:size(pattern,1)
+                cell = pattern(iCell);
 
-                if obj.isAlive(pattern(iCell,1), pattern(iCell,2))
-                    warning('Cell (%d,%d) was already alive', pattern(iCell,1), pattern(iCell,2))
+                if obj.isAlive(cell)
+                    warning('Cell (%d,%d) was already alive', cell.x, cell.y)
                 else
-                    obj.aliveCells(end+1,:) = pattern(iCell,:);
-                    obj.borned(end+1,:) = pattern(iCell,:);
+                    obj.aliveCells(end+1,:) = cell;
+                    obj.borned(end+1,:)     = cell;
                 end
             end
     
         end
 
-        function neighbour = getNeighbour(obj, x,y)
+        function neighbour = getNeighbour(obj, x, y)
             %getNeighbour Return the list of neighbour of the cell (x,y)
             % and their life status as a Nx3 array (x,y status)
             % The number of alive neighbour is sum(neighbour(:,3))
+
+            if nargin == 2 && isa(x,'Points2D')
+                y = x.y;
+                x = x.x;
+            end
 
             neighbour = [ x - 1, y - 1,   obj.isAlive( x - 1 , y - 1) ; ...
                           x ,    y - 1,   obj.isAlive( x     , y - 1) ; ...

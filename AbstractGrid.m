@@ -3,7 +3,7 @@ classdef (Abstract) AbstractGrid
 
     properties
         %aliveCells [nx2] (x,y) coordinate of the alives cells
-        aliveCells
+        aliveCells 
 
         %borned [nx2] (x,y) coordinate of the newly born cells after a call
         %to update
@@ -25,9 +25,9 @@ classdef (Abstract) AbstractGrid
                 initialConfiguration = [];
             end
 
-            obj.aliveCells  = [];
-            obj.borned      = [];
-            obj.dead        = [];
+            obj.aliveCells  = Points2D();
+            obj.borned      = Points2D();
+            obj.dead        = Points2D();
 
             if ~isempty(initialConfiguration)
                 obj = obj.addPattern(initialConfiguration,0, 0);
@@ -36,13 +36,20 @@ classdef (Abstract) AbstractGrid
 
         function t = isAlive(obj, x, y)
             %ISALIVE Return 1 if the cell (x,y) is currently alive
+            % Usage: obj.isAlive(x,y) 
+            %        obj.isAlive(Points2D(x,y)) 
 
             if isempty(obj.aliveCells)
                 t = false;
                 return
             end
 
-            t = any(all(obj.aliveCells == [ x, y],2));
+            if nargin == 3 
+                t =  any(obj.aliveCells == Points2D(x,y));
+            elseif nargin == 2 && isa(x,'Points2D')
+                t =  any(obj.aliveCells == x);
+            end
+
         end
 
         function obj = update(obj)
@@ -54,9 +61,9 @@ classdef (Abstract) AbstractGrid
             
             stayingAlive        = false(1,size(obj.aliveCells,1));
             potientialyAlive    = [];
-        
-            for iCell = 1:size(obj.aliveCells,1)
-                neighbour = obj.getNeighbour(obj.aliveCells(iCell,1) , obj.aliveCells(iCell,2));
+
+            for iCell = 1:length(obj.aliveCells)
+                neighbour = obj.getNeighbour(obj.aliveCells(iCell));
                 nAlive    = sum(neighbour(:,3));
                 
                 % Keep track of the cell that should remains alive
@@ -79,10 +86,11 @@ classdef (Abstract) AbstractGrid
             nAlive  = accumarray(ic,1);
             born    = (nAlive == 3);
 
-            obj.borned          = potientialyAlive(born, : );
-            obj.dead            = obj.aliveCells(~stayingAlive, :);
-            obj.aliveCells      = [ obj.aliveCells(stayingAlive, :)  ; ...
-                                    potientialyAlive(born, : )];
+            obj.borned          = Points2D(potientialyAlive(born, 1 ),potientialyAlive(born, 2 ));
+            obj.dead            = Points2D(potientialyAlive(~stayingAlive, 1 ),potientialyAlive(~stayingAlive, 2 ));
+            
+            obj.aliveCells      = [ obj.aliveCells(stayingAlive)  ; ...
+                                    obj.borned ];
         end
     end
 end
